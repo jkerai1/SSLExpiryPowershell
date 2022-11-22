@@ -1,8 +1,10 @@
 [Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
-
-$url = "https://www.microsoft.com/" 
+$url = "https://www.microsoft.com/"
 $req = [Net.HttpWebRequest]::Create($url)
-$req.GetResponse()
-##$req.ServicePoint.Certificate | gm | where{$_.Name -like "*Date*"}
-
-$req.ServicePoint.Certificate.GetExpirationDateString()
+$req.GetResponse() | Out-Null
+$output = [PSCustomObject]@{
+   URL = $url
+   'Cert Start Date' = $req.ServicePoint.Certificate.GetEffectiveDateString()
+   'Cert End Date' = $req.ServicePoint.Certificate.GetExpirationDateString()
+}
+$output
